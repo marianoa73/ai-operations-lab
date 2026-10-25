@@ -1,0 +1,9 @@
+[
+  {"title": "Agregar pruebas a la función de redondeo", "tags": ["code", "tests"], "prompt_chars": 300},
+  {"title": "Revisar una clave de API vencida", "tags": ["credentials"], "prompt_chars": 120},
+  {"title": "Comparar tres bibliotecas de gráficos", "tags": ["research"], "prompt_chars": 400},
+  {"title": "Comparar tres bibliotecas de gráficos (consigna larga)", "tags": ["research"], "prompt_chars": 5200},
+  {"title": "Escribir un conversor de informes de gastos", "tags": ["code", "finance"], "prompt_chars": 800},
+  {"title": "Reiniciar un servicio de producción", "tags": ["production", "infra"], "prompt_chars": 90},
+  {"title": "Sugerir nombre para un módulo", "tags": ["naming"], "prompt_chars": 60}
+]
