@@ -2,52 +2,10 @@
 
 ## Diagrama general
 
-```mermaid
-flowchart TB
-    P([Persona<br/>aprueba y decide modelos])
+![Arquitectura con detalle y límites de confianza](assets/02-arquitectura.svg)
 
-    subgraph NUBE["Servicios de terceros (nube)"]
-        direction LR
-        C["Coordinador<br/>Claude<br/><i>acceso real + revisión</i>"]
-        B["Builder<br/>Codex<br/><i>sólo datos ficticios</i>"]
-        A["Auxiliar<br/>OpenRouter / OpenCode<br/><i>sólo contenido público</i>"]
-    end
+*Versión en alta resolución: [`02-arquitectura.png`](assets/02-arquitectura.png)*
 
-    subgraph LAN["Red propia"]
-        direction LR
-        subgraph K8S["Clúster Kubernetes (k3s)"]
-            W["Open WebUI<br/><i>interfaz de chat y documentos</i>"]
-        end
-        subgraph MS["Servidor de modelos"]
-            O["Ollama"]
-            M1["Gemma 4 26B-A4B<br/><i>respuestas</i>"]
-            M2["Modelo de embeddings<br/><i>búsqueda en documentos</i>"]
-        end
-        FW{{"Firewall<br/>puerto del modelo sólo para la interfaz"}}
-        SYS[("Sistemas reales<br/>servidores · paneles · bases")]
-        W --> FW --> O
-        O --- M1
-        O --- M2
-    end
-
-    P -->|pide| C
-    C -->|"consigna con datos ficticios (tmux)"| B
-    C -->|"pregunta pública corta (tmux)"| A
-    B -->|"código + resumen (archivo)"| C
-    A -->|"respuesta (archivo)"| C
-    C -->|"prueba y opera con acceso real"| SYS
-    C -->|"qué hizo cada IA"| P
-    P -->|"chat y consulta de documentos"| W
-
-    classDef cloud fill:#EAF0FB,stroke:#3B5BA9,color:#091430;
-    classDef local fill:#E8F5EE,stroke:#2E7D5B,color:#0B2A1D;
-    classDef person fill:#FFF4DC,stroke:#9C6300,color:#3A2600;
-    class C,B,A cloud;
-    class W,O,M1,M2,FW,SYS local;
-    class P person;
-```
-
-Azul: servicios de terceros. Verde: dentro de la red propia. Amarillo: la persona.
 
 ## Piezas
 
@@ -58,25 +16,21 @@ Azul: servicios de terceros. Verde: dentro de la red propia. Amarillo: la person
    de hasta 60 líneas.
 3. **Auxiliar.** Otra sesión `tmux` con un modelo económico. Sólo preguntas públicas y cortas.
 4. **Modelo propio.** Ollama sirve el modelo dentro de la red; Open WebUI, desplegado en Kubernetes, es el frente de
-   chat y de consulta de documentos. Es el único camino donde el contenido no sale de la red.
-5. **Persona.** Mira cualquier sesión en vivo, aprueba lo que se publica y es la única que cambia el modelo de un asistente.
+   chat y de consulta de documentos, publicado con un certificado HTTPS a través de Caddy (proxy inverso). Es el único
+   camino donde el contenido no sale de la red.
+5. **Verificación por modelos externos.** Antes de pedir la aprobación, otros modelos hacen pruebas de funcionamiento,
+   de visibilidad y de seguridad sobre lo entregado y devuelven el resultado al coordinador.
+6. **Persona.** Mira cualquier sesión en vivo, aprueba lo que se publica y es la única que cambia el modelo de un asistente.
 
 ## Flujo de una tarea
 
-```mermaid
-sequenceDiagram
-    participant P as Persona
-    participant C as Coordinador
-    participant B as Builder
-    P->>C: pedido
-    C->>C: enrutar (src/route.py recomienda)
-    C->>B: consigna con datos ficticios (tmux)
-    B-->>C: código + RESUMEN.md
-    C->>C: revisar y probar con datos reales aislados
-    C->>P: resultado y qué hizo cada IA
-    P->>C: aprobar
-    C->>C: publicar y anotar en bitácora
-```
+Después de que el builder entrega y el coordinador revisa, **modelos externos hacen una verificación aparte**: pruebas de
+funcionamiento, de visibilidad (qué queda expuesto) y de seguridad. El resultado vuelve al coordinador; si algo falla, se
+corrige y se repite el ciclo completo. Sólo con todo en orden se le pide la aprobación a la persona, y recién entonces se publica.
+
+![Flujo de una tarea con verificación externa y aprobación](assets/03-flujo-de-una-tarea.svg)
+
+*Versión en alta resolución: [`03-flujo-de-una-tarea.png`](assets/03-flujo-de-una-tarea.png)*
 
 ## Límites de confianza
 

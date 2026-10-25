@@ -20,11 +20,13 @@ Author: Mariano Araujo · MIT license · Spanish is the primary language of this
    bash tests/test_delegate.sh                # 5 script cases, with a simulated tmux
    ```
 
+![Overview: third-party services on top, the person in the middle, the private network below](docs/assets/01-diagrama-general.svg)
+
 ## What it shows
 
 - **Roles split by data risk:** the coordinator keeps anything sensitive or unclassified; the builder handles code with fictional data; the auxiliary model answers short public questions.
 - **Delegation through `tmux` sessions:** answers are read from files, with an explicit end marker. The screen is only used for two heuristic signals (idle input box, permission prompt).
-- **A self-hosted model** (Ollama behind Open WebUI on Kubernetes) for short tasks on internal documents without sending data out.
+- **A self-hosted model** (Ollama behind Open WebUI on Kubernetes, published over HTTPS through Caddy) for short tasks on internal documents without sending data out.
 - **Documented failures and fixes** in [`docs/decisions.md`](docs/decisions.md).
 
 ## What this repository does and does not guarantee

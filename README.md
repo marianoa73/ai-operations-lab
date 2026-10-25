@@ -31,47 +31,9 @@ qué no se delega y qué pasó cuando algo falló.
 
 Una persona aprueba lo que sale hacia afuera y decide los cambios de modelo.
 
-```mermaid
-flowchart LR
-    P([Persona])
+![Diagrama general: servicios de terceros arriba, la persona en el centro y la red propia abajo](docs/assets/01-diagrama-general.svg)
 
-    subgraph NUBE["Servicios en la nube"]
-        direction TB
-        C["Coordinador<br/>Claude"]
-        B["Builder<br/>Codex"]
-        A["Auxiliar<br/>OpenRouter · modelo económico"]
-    end
-
-    subgraph LAN["Red propia"]
-        direction TB
-        subgraph K8S["Kubernetes (k3s)"]
-            W["Interfaz web<br/>Open WebUI"]
-        end
-        subgraph MS["Servidor de modelos"]
-            O["Ollama"]
-            M["Gemma 4 26B-A4B<br/>+ embeddings"]
-        end
-        SYS[("Sistemas reales")]
-        W -->|"HTTP, sólo desde el clúster"| O
-        O --- M
-    end
-
-    P -->|"pide y aprueba"| C
-    C -->|"código con datos ficticios"| B
-    C -->|"preguntas públicas cortas"| A
-    B -->|"resumen en archivo"| C
-    A -->|"respuesta en archivo"| C
-    C -->|"prueba y opera"| SYS
-    P -->|"chat y documentos internos"| W
-    C -->|"bitácora: quién hizo qué"| P
-
-    classDef cloud fill:#EAF0FB,stroke:#3B5BA9,color:#091430;
-    classDef local fill:#E8F5EE,stroke:#2E7D5B,color:#0B2A1D;
-    classDef person fill:#FFF4DC,stroke:#9C6300,color:#3A2600;
-    class C,B,A cloud;
-    class W,O,M,SYS local;
-    class P person;
-```
+*Versión en alta resolución: [`01-diagrama-general.png`](docs/assets/01-diagrama-general.png)*
 
 ## Qué incluye
 

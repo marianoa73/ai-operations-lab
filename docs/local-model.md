@@ -7,26 +7,13 @@ Un participante que corre **dentro de la red propia**: lo que se le pregunta no 
 - CPU Intel i5, **32 GB de RAM**, sin GPU dedicada, disco NVMe de 1 TB.
 - Ubuntu Server 24.04 LTS, **Ollama** (0.40.x) como servidor de modelos.
 - **Open WebUI** desplegado en un clúster **Kubernetes (k3s)** como interfaz de chat y de consulta de documentos.
+- **Caddy** como publicador (proxy inverso) con certificado **HTTPS** entre la persona y Kubernetes.
 - Discos separados por función (modelos, datos de proyectos, contenedores) con LVM para crecer sin reinstalar.
 - Pendiente de registrar: cuantización exacta de cada modelo y versiones de cada componente.
 
-```mermaid
-flowchart LR
-    U([Persona]) --> W
-    subgraph K8S["Kubernetes (k3s)"]
-        W["Open WebUI"]
-    end
-    subgraph MS["Equipo de modelos · Intel i5 · 32 GB · sin GPU"]
-        FW{{"Firewall"}}
-        O["Ollama"]
-        M1["Gemma 4 26B-A4B"]
-        M2["Embeddings"]
-        FW --> O --- M1
-        O --- M2
-    end
-    W -->|"sólo este origen"| FW
-    D[("Colecciones de documentos<br/>por proyecto (planificado)")] -.-> W
-```
+![Modelo propio: persona, HTTPS con Caddy, Kubernetes con Open WebUI, firewall y Ollama](assets/04-modelo-propio.svg)
+
+*Versión en alta resolución: [`04-modelo-propio.png`](assets/04-modelo-propio.png)*
 
 ## Para qué se usa
 
