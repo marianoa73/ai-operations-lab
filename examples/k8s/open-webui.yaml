@@ -1,0 +1,44 @@
+# Open WebUI en k3s, apuntando a un Ollama que corre en otro equipo de la red.
+# Antes de aplicar: reemplazar OLLAMA_URL y fijar la imagen a una versión concreta (no dejar :main en uso real).
+apiVersion: v1
+kind: Namespace
+metadata: { name: ai-lab }
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: open-webui-data, namespace: ai-lab }
+spec:
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 5Gi } }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: open-webui, namespace: ai-lab }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: open-webui } }
+  template:
+    metadata: { labels: { app: open-webui } }
+    spec:
+      containers:
+        - name: open-webui
+          image: ghcr.io/open-webui/open-webui:main
+          ports: [{ containerPort: 8080 }]
+          env:
+            - { name: OLLAMA_BASE_URL, value: "http://192.168.1.50:11434" }
+            - { name: ENABLE_SIGNUP, value: "false" }
+          resources:
+            requests: { memory: 512Mi, cpu: 250m }
+            limits: { memory: 1536Mi }
+          volumeMounts: [{ name: data, mountPath: /app/backend/data }]
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: open-webui-data }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: open-webui, namespace: ai-lab }
+spec:
+  type: NodePort
+  selector: { app: open-webui }
+  ports: [{ port: 8080, targetPort: 8080, nodePort: 30080 }]

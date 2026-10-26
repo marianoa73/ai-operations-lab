@@ -1,5 +1,14 @@
 # Cambios
 
+## 0.4.0
+- `src/preflight.sh`: chequeo de prerrequisitos antes de instalar (arquitectura, sistema, memoria, disco, herramientas, red, hora, puertos), con pruebas; `docs/install.md` con la tabla de prerrequisitos, versiones usadas y espacio en disco (medido y estimado).
+- Hardware objetivo: todo el laboratorio en una Raspberry Pi 4B de 8 GB (`docs/hardware.md`, diagrama 05), con el modelo
+  propio en un equipo aparte.
+- Monitoreo web de las consolas: `src/consoles.sh` (sesiones `tmux`) y `src/monitor.py` (página de sólo lectura que se
+  refresca sola, con secretos tapados y pausa de emergencia), con pruebas.
+- `docs/install.md`: manual de instalación para terceros (requisitos, pasos manuales y automáticos, HTTPS con Caddy,
+  k3s, modelo propio) y `examples/` con la configuración general.
+
 ## 0.3.0
 - Diagramas rehechos a mano (SVG y PNG de alta resolución en `docs/assets/`), con el flujo de arriba hacia abajo: servicios de terceros, persona y red propia.
 - Se agrega el certificado HTTPS con Caddy entre la persona y Kubernetes, y el ciclo de verificación por modelos externos

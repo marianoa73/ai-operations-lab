@@ -1,0 +1,15 @@
+# Servicio de usuario: levanta las consolas en tmux al arrancar.
+# Instalar en ~/.config/systemd/user/ y habilitar con: systemctl --user enable --now ai-consoles
+# Para que arranque sin sesión abierta: sudo loginctl enable-linger $USER
+[Unit]
+Description=Consolas de IA en tmux
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=%h/.config/ai-lab/ai-lab.env
+ExecStart=%h/ai-operations-lab/src/consoles.sh start
+ExecStop=%h/ai-operations-lab/src/consoles.sh stop
+
+[Install]
+WantedBy=default.target

@@ -10,7 +10,7 @@ cd ai-operations-lab
 python3 -m unittest discover -s tests -v
 ```
 
-Resultado esperado: 11 pruebas en verde. Las tareas de `demo/fixtures/tasks.json` están inventadas para este repositorio.
+Resultado esperado: 21 pruebas en verde (11 del enrutador y 10 del monitoreo). Las tareas de `demo/fixtures/tasks.json` están inventadas para este repositorio.
 
 Para explorar:
 - Cambiá una etiqueta en `demo/fixtures/tasks.json` y corré las pruebas: el enrutador debería mandar la tarea a otro participante.

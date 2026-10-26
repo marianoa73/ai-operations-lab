@@ -1,0 +1,7 @@
+[Unit]
+Description=Genera la página de monitoreo de las consolas
+
+[Service]
+Type=oneshot
+EnvironmentFile=%h/.config/ai-lab/ai-lab.env
+ExecStart=/usr/bin/python3 %h/ai-operations-lab/src/monitor.py

@@ -16,7 +16,7 @@ Author: Mariano Araujo · MIT license · Spanish is the primary language of this
    and a self-hosted model setup. The AI assistants wrote and tested a large part of the code.
 4. **Verify in a minute:**
    ```bash
-   python3 -m unittest discover -s tests -v   # 11 router tests
+   python3 -m unittest discover -s tests -v   # 21 tests: router and monitor
    bash tests/test_delegate.sh                # 5 script cases, with a simulated tmux
    ```
 
@@ -27,6 +27,8 @@ Author: Mariano Araujo · MIT license · Spanish is the primary language of this
 - **Roles split by data risk:** the coordinator keeps anything sensitive or unclassified; the builder handles code with fictional data; the auxiliary model answers short public questions.
 - **Delegation through `tmux` sessions:** answers are read from files, with an explicit end marker. The screen is only used for two heuristic signals (idle input box, permission prompt).
 - **A self-hosted model** (Ollama behind Open WebUI on Kubernetes, published over HTTPS through Caddy) for short tasks on internal documents without sending data out.
+- **A single-board target:** everything except the self-hosted model is designed to fit on one **Raspberry Pi 4B (8 GB)**: the three assistants' consoles in `tmux`, Caddy (HTTPS), Open WebUI on k3s and a read-only web page that refreshes the consoles. Memory budget (an estimate, not yet measured on one board) in [`docs/hardware.md`](docs/hardware.md); a step-by-step [install guide for third parties](docs/install.md) (Spanish) and ready-to-copy [`examples/`](examples/).
+- **Web monitoring of the consoles:** [`src/monitor.py`](src/monitor.py) renders the last lines of each `tmux` session (secrets masked by pattern, best effort) into a static page served behind HTTPS and a password; there is a pause switch.
 - **Documented failures and fixes** in [`docs/decisions.md`](docs/decisions.md).
 
 ## What this repository does and does not guarantee

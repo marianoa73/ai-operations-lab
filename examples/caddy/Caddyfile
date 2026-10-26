@@ -1,0 +1,20 @@
+# Publicador con HTTPS automático. Caddy pide y renueva el certificado solo (hacen falta los puertos 80 y 443
+# alcanzables desde Internet, o un desafío DNS; para uso sólo en la red local ver docs/install.md).
+# Variables: ver examples/ai-lab.env.example (Caddy las lee del entorno del servicio).
+{$LAB_DOMAIN} {
+	encode gzip
+
+	# Monitoreo de consolas: página estática, de sólo lectura, con contraseña.
+	handle_path /monitor/* {
+		basic_auth {
+			{$MONITOR_USER} {$MONITOR_PASS_HASH}
+		}
+		root * /var/lib/ai-lab/monitor
+		file_server
+	}
+
+	# Open WebUI (NodePort de k3s, sólo escucha en esta máquina).
+	handle {
+		reverse_proxy 127.0.0.1:30080
+	}
+}
